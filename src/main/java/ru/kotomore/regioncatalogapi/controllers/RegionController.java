@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
 import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
-import ru.kotomore.regioncatalogapi.services.RegionService;
+import ru.kotomore.regioncatalogapi.services.RegionServiceUseCase;
 import ru.kotomore.regioncatalogapi.validators.RegionRequestValidator;
 
 @RestController
@@ -14,7 +14,7 @@ import ru.kotomore.regioncatalogapi.validators.RegionRequestValidator;
 @RequiredArgsConstructor
 public class RegionController {
 
-    private final RegionService regionService;
+    private final RegionServiceUseCase regionService;
 
 
     @GetMapping("/")
