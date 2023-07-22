@@ -34,6 +34,6 @@ public interface RegionRepository {
     @Delete("DELETE FROM region WHERE id = #{id}")
     boolean deleteById(Long id);
 
-    @Delete("DELETE * FROM region")
+    @Delete("DELETE FROM region")
     boolean deleteAll();
 }

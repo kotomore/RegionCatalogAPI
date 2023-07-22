@@ -16,8 +16,7 @@ public class RegionController {
 
     private final RegionServiceUseCase regionService;
 
-
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getRegions(
             @RequestParam(required = false) String abbreviation,
             @RequestParam(required = false) String name
@@ -40,7 +39,7 @@ public class RegionController {
         return ResponseEntity.ok().body(regionService.findById(id));
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> createRegion(@RequestBody CreateRegionRequest createRegionRequest) {
         if (RegionRequestValidator.isValidCreateRegionRequest(createRegionRequest)) {
             return ResponseEntity.ok().body(regionService.save(createRegionRequest));
@@ -49,7 +48,7 @@ public class RegionController {
         }
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateRegion(@RequestBody UpdateRegionRequest updateRegionRequest) {
         if (RegionRequestValidator.isValidUpdateRegionRequest(updateRegionRequest)) {
             return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
@@ -64,7 +63,7 @@ public class RegionController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<?> deleteAllRegions() {
         regionService.deleteAll();
         return ResponseEntity.ok().build();
