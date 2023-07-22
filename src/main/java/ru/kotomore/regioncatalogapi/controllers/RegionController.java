@@ -7,6 +7,7 @@ import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
 import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
 import ru.kotomore.regioncatalogapi.services.RegionService;
+import ru.kotomore.regioncatalogapi.validators.RegionRequestValidator;
 
 @RestController
 @RequestMapping("/api/regions")
@@ -41,12 +42,20 @@ public class RegionController {
 
     @PostMapping("/")
     public ResponseEntity<?> createRegion(@RequestBody CreateRegionRequest createRegionRequest) {
-        return ResponseEntity.ok().body(regionService.save(createRegionRequest));
+        if (RegionRequestValidator.isValidCreateRegionRequest(createRegionRequest)) {
+            return ResponseEntity.ok().body(regionService.save(createRegionRequest));
+        } else {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Не все поля запроса заполнены"));
+        }
     }
 
     @PutMapping("/")
     public ResponseEntity<?> updateRegion(@RequestBody UpdateRegionRequest updateRegionRequest) {
-        return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
+        if (RegionRequestValidator.isValidUpdateRegionRequest(updateRegionRequest)) {
+            return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
+        } else {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Не все поля запроса заполнены"));
+        }
     }
 
     @DeleteMapping("/{id}")
