@@ -1,4 +1,4 @@
-package ru.kotomore.regioncatalogapi.validators;
+package ru.kotomore.regioncatalogapi.utils;
 
 import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
 import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;

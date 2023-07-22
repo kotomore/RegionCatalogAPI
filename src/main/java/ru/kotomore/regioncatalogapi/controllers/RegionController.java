@@ -7,7 +7,7 @@ import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
 import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
 import ru.kotomore.regioncatalogapi.services.RegionServiceUseCase;
-import ru.kotomore.regioncatalogapi.validators.RegionRequestValidator;
+import ru.kotomore.regioncatalogapi.utils.RegionRequestValidator;
 
 @RestController
 @RequestMapping("/api/regions")

@@ -13,6 +13,7 @@ import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotFoundException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotSavedException;
 import ru.kotomore.regioncatalogapi.repositories.RegionRepository;
+import ru.kotomore.regioncatalogapi.utils.RegionMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class RegionService implements RegionServiceUseCase {
     @Cacheable(value = "regions", key = "#id")
     public RegionResponse findById(Long id) {
         return regionRepository.findById(id)
-                .map(this::mapToRegionResponse)
+                .map(RegionMapper::mapToRegionResponse)
                 .orElseThrow(() -> new RegionNotFoundException(id));
     }
 
@@ -35,16 +36,16 @@ public class RegionService implements RegionServiceUseCase {
     @Cacheable("regions")
     public List<RegionResponse> findAll() {
         return regionRepository.findAll().stream()
-                .map(this::mapToRegionResponse)
+                .map(RegionMapper::mapToRegionResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     @CacheEvict(value = {"regions", "regionsByAbbreviation", "regionsByName"}, allEntries = true)
     public RegionResponse save(CreateRegionRequest regionRequest) {
-        Region regionToSave = new Region(regionRequest.name(), regionRequest.abbreviation());
+        Region regionToSave = RegionMapper.mapToRegion(regionRequest);
         if (!regionRepository.save(regionToSave)) {
-            return mapToRegionResponse(regionToSave);
+            return RegionMapper.mapToRegionResponse(regionToSave);
         } else {
             throw new RegionNotSavedException();
         }
@@ -58,9 +59,9 @@ public class RegionService implements RegionServiceUseCase {
 
     })
     public RegionResponse update(UpdateRegionRequest regionRequest) {
-        Region regionToUpdate = new Region(regionRequest.id(), regionRequest.name(), regionRequest.abbreviation());
+        Region regionToUpdate = RegionMapper.mapToRegion(regionRequest);
         if (regionRepository.update(regionToUpdate)) {
-            return mapToRegionResponse(regionToUpdate);
+            return RegionMapper.mapToRegionResponse(regionToUpdate);
         } else {
             throw new RegionNotSavedException(regionRequest.id());
         }
@@ -92,7 +93,7 @@ public class RegionService implements RegionServiceUseCase {
     public List<RegionResponse> findByAbbreviation(String abbreviation) {
         return regionRepository.findByAbbreviation(abbreviation)
                 .stream()
-                .map(this::mapToRegionResponse)
+                .map(RegionMapper::mapToRegionResponse)
                 .collect(Collectors.toList());
     }
 
@@ -101,13 +102,8 @@ public class RegionService implements RegionServiceUseCase {
     public List<RegionResponse> findByName(String name) {
         return regionRepository.findByName(name)
                 .stream()
-                .map(this::mapToRegionResponse)
+                .map(RegionMapper::mapToRegionResponse)
                 .collect(Collectors.toList());
-    }
-
-
-    private RegionResponse mapToRegionResponse(Region region) {
-        return new RegionResponse(region.getId(), region.getName(), region.getAbbreviation());
     }
 
 }
