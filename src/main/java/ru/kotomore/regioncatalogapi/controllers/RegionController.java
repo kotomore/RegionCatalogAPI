@@ -41,20 +41,14 @@ public class RegionController {
 
     @PostMapping
     public ResponseEntity<?> createRegion(@RequestBody CreateRegionRequest createRegionRequest) {
-        if (RegionRequestValidator.isValidCreateRegionRequest(createRegionRequest)) {
-            return ResponseEntity.ok().body(regionService.save(createRegionRequest));
-        } else {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Не все поля запроса заполнены"));
-        }
+        RegionRequestValidator.validateCreateRegionRequest(createRegionRequest);
+        return ResponseEntity.ok().body(regionService.save(createRegionRequest));
     }
 
     @PutMapping
     public ResponseEntity<?> updateRegion(@RequestBody UpdateRegionRequest updateRegionRequest) {
-        if (RegionRequestValidator.isValidUpdateRegionRequest(updateRegionRequest)) {
-            return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
-        } else {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Не все поля запроса заполнены"));
-        }
+        RegionRequestValidator.validateUpdateRegionRequest(updateRegionRequest);
+        return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
     }
 
     @DeleteMapping("/{id}")

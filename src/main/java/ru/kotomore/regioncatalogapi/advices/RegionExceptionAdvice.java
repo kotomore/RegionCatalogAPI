@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
+import ru.kotomore.regioncatalogapi.exceptions.BadRequestRegionException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotFoundException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotSavedException;
@@ -29,6 +30,12 @@ public class RegionExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(RegionNotSavedException.class)
     public ResponseEntity<?> regionNotSavedException(RegionNotSavedException ex) {
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadRequestRegionException.class)
+    public ResponseEntity<?> badRequestRegionException(BadRequestRegionException ex) {
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
