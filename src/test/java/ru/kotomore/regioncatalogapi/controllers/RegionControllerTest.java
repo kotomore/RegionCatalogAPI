@@ -44,7 +44,7 @@ public class RegionControllerTest {
         RegionController regionController = new RegionController(regionService);
         mockMvc = MockMvcBuilders.standaloneSetup(regionController).build();
 
-        when(regionService.findAll()).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
+        when(regionService.findAll(null)).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
 
         mockMvc.perform(get("/api/regions"))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ public class RegionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(regionController).build();
         String name = "abc";
 
-        when(regionService.findByName(name)).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
+        when(regionService.findByName(name, null)).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
 
         mockMvc.perform(get("/api/regions")
                         .param("name", name))
@@ -72,7 +72,7 @@ public class RegionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(regionController).build();
         String abbreviation = "abc";
 
-        when(regionService.findByAbbreviation(abbreviation)).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
+        when(regionService.findByAbbreviation(abbreviation, null)).thenReturn(List.of(getRegionResponse(1L), getRegionResponse(2L)));
 
         mockMvc.perform(get("/api/regions")
                         .param("abbreviation", abbreviation))

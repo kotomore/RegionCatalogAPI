@@ -11,24 +11,24 @@ import java.util.Optional;
 @Repository
 public interface RegionRepository {
 
-    @Select("select * from region where id = #{id}")
+    @Select("SELECT * FROM region WHERE id = #{id}")
     Optional<Region> findById(@Param("id") Long id);
 
-    @Select("SELECT * FROM region WHERE LOWER(name) LIKE CONCAT('%', LOWER(#{name}), '%')")
-    List<Region> findByName(@Param("name") String name);
+    @Select("SELECT * FROM region WHERE LOWER(name) LIKE CONCAT('%', LOWER(#{name}), '%') ORDER BY ${columnName}")
+    List<Region> findByName(@Param("name") String name, @Param("columnName") String columnName);
 
-    @Select("SELECT * FROM region WHERE LOWER(abbreviation) LIKE CONCAT('%', LOWER(#{abbreviation}), '%')")
-    List<Region> findByAbbreviation(@Param("abbreviation") String abbreviation);
+    @Select("SELECT * FROM region WHERE LOWER(abbreviation) LIKE CONCAT('%', LOWER(#{abbreviation}), '%') ORDER BY ${columnName}")
+    List<Region> findByAbbreviation(@Param("abbreviation") String abbreviation, @Param("columnName") String columnName);
 
-    @Select("select * from region")
-    List<Region> findAll();
+    @Select("SELECT * FROM region ORDER BY ${columnName}")
+    List<Region> findAll(@Param("columnName") String columnName);
 
-    @Insert("insert into region (name, abbreviation) values (#{name}, #{abbreviation})")
+    @Insert("INSERT INTO region (name, abbreviation) VALUES (#{name}, #{abbreviation})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     boolean save(Region region);
 
-    @Update("Update region set name=#{name}, " +
-            " abbreviation=#{abbreviation} where id=#{id} ")
+    @Update("UPDATE region SET name=#{name}, " +
+            " abbreviation=#{abbreviation} WHERE id=#{id} ")
     boolean update(Region region);
 
     @Delete("DELETE FROM region WHERE id = #{id}")

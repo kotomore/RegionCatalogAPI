@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
 import ru.kotomore.regioncatalogapi.dto.RegionRequest;
+import ru.kotomore.regioncatalogapi.dto.SortType;
 import ru.kotomore.regioncatalogapi.services.RegionServiceUseCase;
 import ru.kotomore.regioncatalogapi.utils.RegionRequestValidator;
 
@@ -23,18 +24,20 @@ public class RegionController {
             @Parameter(description = "Поиск по совпадению сокращенного названия")
             @RequestParam(required = false) String abbreviation,
             @Parameter(description = "Поиск по совпадению названия региона")
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @Parameter(description = "Сортировка по полю")
+            @RequestParam(required = false) SortType sortType
     ) {
         if (abbreviation != null && name != null) {
             return ResponseEntity.badRequest()
                     .body(new ErrorMessage("возможен только один фильтр: 'abbreviation' или 'name'"));
         }
         if (abbreviation != null) {
-            return ResponseEntity.ok(regionService.findByAbbreviation(abbreviation));
+            return ResponseEntity.ok(regionService.findByAbbreviation(abbreviation, sortType));
         } else if (name != null) {
-            return ResponseEntity.ok(regionService.findByName(name));
+            return ResponseEntity.ok(regionService.findByName(name, sortType));
         } else {
-            return ResponseEntity.ok().body(regionService.findAll());
+            return ResponseEntity.ok().body(regionService.findAll(sortType));
         }
     }
 

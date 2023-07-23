@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.dto.RegionResponse;
+import ru.kotomore.regioncatalogapi.dto.SortType;
 import ru.kotomore.regioncatalogapi.entities.Region;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotFoundException;
@@ -58,9 +59,9 @@ public class RegionServiceTest {
     public void testFindAll_ReturnsListOfRegionResponse() {
 
         List<Region> regions = Arrays.asList(getRegion(1L), getRegion(2L));
-        when(regionRepository.findAll()).thenReturn(regions);
+        when(regionRepository.findAll("id")).thenReturn(regions);
 
-        List<RegionResponse> result = regionService.findAll();
+        List<RegionResponse> result = regionService.findAll(SortType.ID);
         assertNotNull(result);
         assertEquals(regions.size(), result.size());
     }
@@ -122,9 +123,9 @@ public class RegionServiceTest {
     public void testFindByAbbreviation_ExistingAbbreviation_ReturnsListOfRegionResponse() {
         String abbreviation = "AB";
         List<Region> regions = Arrays.asList(getRegion(1L), getRegion(2L));
-        when(regionRepository.findByAbbreviation(abbreviation)).thenReturn(regions);
+        when(regionRepository.findByAbbreviation(abbreviation, "id")).thenReturn(regions);
 
-        List<RegionResponse> result = regionService.findByAbbreviation(abbreviation);
+        List<RegionResponse> result = regionService.findByAbbreviation(abbreviation, SortType.ID);
 
         assertNotNull(result);
         assertEquals(regions.size(), result.size());
@@ -133,9 +134,9 @@ public class RegionServiceTest {
     @Test
     public void testFindByAbbreviation_NonExistingAbbreviation_ReturnsEmptyList() {
         String nonExistingAbbreviation = "XYZ";
-        when(regionRepository.findByAbbreviation(nonExistingAbbreviation)).thenReturn(Collections.emptyList());
+        when(regionRepository.findByAbbreviation(nonExistingAbbreviation, "id")).thenReturn(Collections.emptyList());
 
-        List<RegionResponse> result = regionService.findByAbbreviation(nonExistingAbbreviation);
+        List<RegionResponse> result = regionService.findByAbbreviation(nonExistingAbbreviation, SortType.ID);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -145,9 +146,9 @@ public class RegionServiceTest {
     public void testFindByName_ExistingName_ReturnsListOfRegionResponse() {
         String name = "Region Name";
         List<Region> regions = Arrays.asList(getRegion(1L), getRegion(2L));
-        when(regionRepository.findByName(name)).thenReturn(regions);
+        when(regionRepository.findByName(name, "id")).thenReturn(regions);
 
-        List<RegionResponse> result = regionService.findByName(name);
+        List<RegionResponse> result = regionService.findByName(name, SortType.ID);
 
         assertNotNull(result);
         assertEquals(regions.size(), result.size());
@@ -157,9 +158,9 @@ public class RegionServiceTest {
     public void testFindByName_NonExistingName_ReturnsEmptyList() {
         // Arrange
         String nonExistingName = "Non-Existent Region";
-        when(regionRepository.findByName(nonExistingName)).thenReturn(Collections.emptyList());
+        when(regionRepository.findByName(nonExistingName, "id")).thenReturn(Collections.emptyList());
 
-        List<RegionResponse> result = regionService.findByName(nonExistingName);
+        List<RegionResponse> result = regionService.findByName(nonExistingName, SortType.ID);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
