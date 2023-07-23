@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.dto.RegionResponse;
-import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
 import ru.kotomore.regioncatalogapi.entities.Region;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotFoundException;
@@ -68,14 +68,13 @@ public class RegionServiceTest {
     @Test
     public void testUpdate_ValidRegionRequest_ReturnsUpdatedRegionResponse() {
         Long id = 1L;
-        UpdateRegionRequest regionRequest = getUpdateRegionRequest(id);
+        RegionRequest regionRequest = getRegionRequest();
         Region regionToUpdate = getRegion(id);
         when(regionRepository.update(regionToUpdate)).thenReturn(true);
 
-        RegionResponse result = regionService.update(regionRequest);
+        RegionResponse result = regionService.update(id, regionRequest);
 
         assertNotNull(result);
-        assertEquals(regionRequest.id(), result.id());
         assertEquals(regionRequest.name(), result.name());
         assertEquals(regionRequest.abbreviation(), result.abbreviation());
 
@@ -83,10 +82,10 @@ public class RegionServiceTest {
 
     @Test
     public void testUpdate_InvalidRegionRequest_ThrowsRegionNotSavedException() {
-        UpdateRegionRequest invalidRegionRequest = getUpdateRegionRequest(1L);
+        RegionRequest invalidRegionRequest = getRegionRequest();
         when(regionRepository.update(any(Region.class))).thenReturn(false);
 
-        assertThrows(RegionNotSavedException.class, () -> regionService.update(invalidRegionRequest));
+        assertThrows(RegionNotSavedException.class, () -> regionService.update(1L, invalidRegionRequest));
     }
 
     @Test
@@ -171,7 +170,7 @@ public class RegionServiceTest {
         return new Region(id, "Some name", "Some abbreviation");
     }
 
-    private static UpdateRegionRequest getUpdateRegionRequest(Long id) {
-        return new UpdateRegionRequest(id, "Some name", "Some abbreviation");
+    private static RegionRequest getRegionRequest() {
+        return new RegionRequest("Some name", "Some abbreviation");
     }
 }

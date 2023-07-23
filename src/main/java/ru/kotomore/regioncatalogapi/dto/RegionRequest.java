@@ -1,6 +1,6 @@
 package ru.kotomore.regioncatalogapi.dto;
 
-public record CreateRegionRequest(
+public record RegionRequest(
          String name,
         String abbreviation
 ) {

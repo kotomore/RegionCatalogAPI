@@ -6,9 +6,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
-import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
+import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.dto.RegionResponse;
-import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
 import ru.kotomore.regioncatalogapi.entities.Region;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotFoundException;
@@ -62,7 +61,7 @@ public class RegionService implements RegionServiceUseCase {
      */
     @Override
     @CacheEvict(value = {"regions", "regionsByAbbreviation", "regionsByName"}, allEntries = true)
-    public RegionResponse save(CreateRegionRequest regionRequest) {
+    public RegionResponse save(RegionRequest regionRequest) {
         Region regionToSave = RegionMapper.mapToRegion(regionRequest);
         if (!regionRepository.save(regionToSave)) {
             return RegionMapper.mapToRegionResponse(regionToSave);
@@ -74,6 +73,7 @@ public class RegionService implements RegionServiceUseCase {
     /**
      * Найти регион по идентификатору
      *
+     * @param id               ID обновляемого региона
      * @param regionRequest    DTO для обновления региона в таблице
      * @return                 DTO для обновленного региона
      * @throws RegionNotSavedException Если не удалось обновить регион
@@ -83,14 +83,15 @@ public class RegionService implements RegionServiceUseCase {
             evict = {
                     @CacheEvict(value = "regionsByAbbreviation", allEntries = true),
                     @CacheEvict(value = "regionsByName", allEntries = true)},
-            put = @CachePut(value = "regions", key = "#regionRequest.id()")
+            put = @CachePut(value = "regions", key = "#id")
     )
-    public RegionResponse update(UpdateRegionRequest regionRequest) {
+    public RegionResponse update(Long id, RegionRequest regionRequest) {
         Region regionToUpdate = RegionMapper.mapToRegion(regionRequest);
+        regionToUpdate.setId(id);
         if (regionRepository.update(regionToUpdate)) {
             return RegionMapper.mapToRegionResponse(regionToUpdate);
         } else {
-            throw new RegionNotSavedException(regionRequest.id());
+            throw new RegionNotSavedException(id);
         }
     }
 

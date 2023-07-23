@@ -10,9 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
+import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.dto.RegionResponse;
-import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
 import ru.kotomore.regioncatalogapi.services.RegionService;
 import ru.kotomore.regioncatalogapi.services.RegionServiceUseCase;
 
@@ -113,13 +112,13 @@ public class RegionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(regionController).build();
 
         RegionResponse regionResponse = getRegionResponse(1L);
-        CreateRegionRequest createRegionRequest = new CreateRegionRequest("name", "ABBR");
+        RegionRequest regionRequest = new RegionRequest("name", "ABBR");
 
         when(regionService.save(any())).thenReturn(regionResponse);
 
         mockMvc.perform(post("/api/regions")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createRegionRequest)))
+                        .content(objectMapper.writeValueAsString(regionRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(regionResponse.name()));
     }
@@ -130,11 +129,11 @@ public class RegionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(regionController).build();
 
         RegionResponse regionResponse = getRegionResponse(1L);
-        UpdateRegionRequest updateRegionRequest = new UpdateRegionRequest(1L, "name", "ABBR");
+        RegionRequest updateRegionRequest = new RegionRequest( "name", "ABBR");
 
-        when(regionService.update(any())).thenReturn(regionResponse);
+        when(regionService.update(any(), any())).thenReturn(regionResponse);
 
-        mockMvc.perform(put("/api/regions")
+        mockMvc.perform(put("/api/regions/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRegionRequest)))
                 .andExpect(status().isOk())

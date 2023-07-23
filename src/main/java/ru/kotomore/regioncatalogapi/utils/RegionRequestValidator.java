@@ -1,20 +1,12 @@
 package ru.kotomore.regioncatalogapi.utils;
 
-import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
-import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
+import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.exceptions.BadRequestRegionException;
 
 public class RegionRequestValidator {
 
-    public static void validateUpdateRegionRequest(UpdateRegionRequest updateRegionRequest) {
-        if (updateRegionRequest.id() == null || updateRegionRequest.abbreviation() == null ||
-                updateRegionRequest.name() == null) {
-            throw new BadRequestRegionException("Не все поля запроса заполнены");
-        }
-    }
-
-    public static void validateCreateRegionRequest(CreateRegionRequest createRegionRequest) {
-        if (createRegionRequest.abbreviation() == null || createRegionRequest.name() == null) {
+    public static void validateRegionRequest(RegionRequest regionRequest) {
+        if (regionRequest.abbreviation() == null || regionRequest.name() == null) {
             throw new BadRequestRegionException("Не все поля запроса заполнены");
         }
     }

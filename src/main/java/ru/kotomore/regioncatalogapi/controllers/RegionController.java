@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kotomore.regioncatalogapi.dto.CreateRegionRequest;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
-import ru.kotomore.regioncatalogapi.dto.UpdateRegionRequest;
+import ru.kotomore.regioncatalogapi.dto.RegionRequest;
 import ru.kotomore.regioncatalogapi.services.RegionServiceUseCase;
 import ru.kotomore.regioncatalogapi.utils.RegionRequestValidator;
 
@@ -47,16 +46,16 @@ public class RegionController {
 
     @PostMapping
     @Operation(summary = "Добавить новый регион")
-    public ResponseEntity<?> createRegion(@RequestBody CreateRegionRequest createRegionRequest) {
-        RegionRequestValidator.validateCreateRegionRequest(createRegionRequest);
-        return ResponseEntity.ok().body(regionService.save(createRegionRequest));
+    public ResponseEntity<?> createRegion(@RequestBody RegionRequest regionRequest) {
+        RegionRequestValidator.validateRegionRequest(regionRequest);
+        return ResponseEntity.ok().body(regionService.save(regionRequest));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Operation(summary = "Обновить существующий регион")
-    public ResponseEntity<?> updateRegion(@RequestBody UpdateRegionRequest updateRegionRequest) {
-        RegionRequestValidator.validateUpdateRegionRequest(updateRegionRequest);
-        return ResponseEntity.ok().body(regionService.update(updateRegionRequest));
+    public ResponseEntity<?> updateRegion(@PathVariable Long id, @RequestBody RegionRequest regionRequest) {
+        RegionRequestValidator.validateRegionRequest(regionRequest);
+        return ResponseEntity.ok().body(regionService.update(id, regionRequest));
     }
 
     @DeleteMapping("/{id}")
