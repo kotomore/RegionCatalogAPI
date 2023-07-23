@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.kotomore.regioncatalogapi.dto.ErrorMessage;
 import ru.kotomore.regioncatalogapi.exceptions.BadRequestRegionException;
 import ru.kotomore.regioncatalogapi.exceptions.RegionNotDeletedException;
@@ -36,6 +37,12 @@ public class RegionExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(BadRequestRegionException.class)
     public ResponseEntity<?> badRequestRegionException(BadRequestRegionException ex) {
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<?> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 

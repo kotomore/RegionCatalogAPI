@@ -2,6 +2,7 @@ package ru.kotomore.regioncatalogapi.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,13 @@ public class RegionService implements RegionServiceUseCase {
 
     private final RegionRepository regionRepository;
 
+    /**
+     * Найти регион по идентификатору
+     *
+     * @param id          Идентификатор региона
+     * @return            DTO для полученного региона
+     * @throws RegionNotFoundException Если такого идентификатора нет в таблице
+     */
     @Override
     @Cacheable(value = "regions", key = "#id")
     public RegionResponse findById(Long id) {
@@ -32,6 +40,11 @@ public class RegionService implements RegionServiceUseCase {
                 .orElseThrow(() -> new RegionNotFoundException(id));
     }
 
+    /**
+     * Получить список всех регионов
+     *
+     * @return   Список DTO для полученных регионов
+     */
     @Override
     @Cacheable("regions")
     public List<RegionResponse> findAll() {
@@ -40,6 +53,13 @@ public class RegionService implements RegionServiceUseCase {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Найти регион по идентификатору
+     *
+     * @param regionRequest   DTO для сохранения региона в таблицу
+     * @return                DTO сохраненного региона с ID
+     * @throws RegionNotSavedException Если не удалось сохранить регион
+     */
     @Override
     @CacheEvict(value = {"regions", "regionsByAbbreviation", "regionsByName"}, allEntries = true)
     public RegionResponse save(CreateRegionRequest regionRequest) {
@@ -51,13 +71,20 @@ public class RegionService implements RegionServiceUseCase {
         }
     }
 
+    /**
+     * Найти регион по идентификатору
+     *
+     * @param regionRequest    DTO для обновления региона в таблице
+     * @return                 DTO для обновленного региона
+     * @throws RegionNotSavedException Если не удалось обновить регион
+     */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "regions", key = "#regionRequest.id()"),
-            @CacheEvict(value = "regionsByAbbreviation", allEntries = true),
-            @CacheEvict(value = "regionsByName", allEntries = true)
-
-    })
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "regionsByAbbreviation", allEntries = true),
+                    @CacheEvict(value = "regionsByName", allEntries = true)},
+            put = @CachePut(value = "regions", key = "#regionRequest.id()")
+    )
     public RegionResponse update(UpdateRegionRequest regionRequest) {
         Region regionToUpdate = RegionMapper.mapToRegion(regionRequest);
         if (regionRepository.update(regionToUpdate)) {
@@ -67,6 +94,12 @@ public class RegionService implements RegionServiceUseCase {
         }
     }
 
+    /**
+     * Удалить регион по идентификатору
+     *
+     * @param id    Идентификатор региона
+     * @throws RegionNotDeletedException Если не удалось удалить регион
+     */
     @Override
     @Caching(evict = {
             @CacheEvict(value = "regions", key = "#id"),
@@ -80,6 +113,10 @@ public class RegionService implements RegionServiceUseCase {
         }
     }
 
+    /**
+     * Удалить все регионы из таблицы
+     * @throws RegionNotDeletedException Если не удалось удалить регион
+     **/
     @Override
     @CacheEvict(value = {"regions", "regionsByAbbreviation", "regionsByName"}, allEntries = true)
     public void deleteAll() {
@@ -88,6 +125,12 @@ public class RegionService implements RegionServiceUseCase {
         }
     }
 
+    /**
+     * Поиск региона по сокращенному названию
+     *
+     * @param abbreviation  сокращенное название
+     * @return              список DTO найденных регионов
+     */
     @Override
     @Cacheable(value = "regionsByAbbreviation", key = "#abbreviation")
     public List<RegionResponse> findByAbbreviation(String abbreviation) {
@@ -97,6 +140,12 @@ public class RegionService implements RegionServiceUseCase {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Поиск региона по сокращенному названию
+     *
+     * @param name   название
+     * @return       список DTO найденных регионов
+     */
     @Override
     @Cacheable(value = "regionsByName", key = "#name")
     public List<RegionResponse> findByName(String name) {
